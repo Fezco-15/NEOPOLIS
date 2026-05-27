@@ -36,13 +36,15 @@ export function ResultScreen({
   avatar,
   answers,
   onBackToMap,
-  onOpenSubscription
+  onOpenSubscription,
+  showAiForTesting = false
 }: {
   account: AccountState | null;
   avatar: AvatarState | null;
   answers: MissionAnswer[];
   onBackToMap: () => void;
   onOpenSubscription: () => void;
+  showAiForTesting?: boolean;
 }) {
   const topTraits = getTopTraits(answers);
   const totalXp = betaMissions.reduce((sum, mission) => sum + mission.xp, 0);
@@ -179,7 +181,20 @@ export function ResultScreen({
           </CardContent>
         </Card>
 
-        <PremiumAiAnalysisGate account={account} avatar={avatar} answers={answers} onOpenSubscription={onOpenSubscription} />
+        {showAiForTesting ? (
+          <Card className="mt-6 border-[#00D1C6]/35">
+            <CardContent className="p-6 sm:p-8">
+              <Badge>Тестовый режим</Badge>
+              <h2 className="mt-4 text-2xl font-black text-white">AI-анализ открыт для проверки</h2>
+              <p className="mt-3 leading-7 text-slate-300">
+                Этот блок получает 15 тестовых решений из первых трех beta-миссий. Так можно быстро проверить, что нейросеть анализирует реальные выборы игрока.
+              </p>
+              <AiCareerAnalysis account={account} avatar={avatar} answers={answers} />
+            </CardContent>
+          </Card>
+        ) : (
+          <PremiumAiAnalysisGate account={account} avatar={avatar} answers={answers} onOpenSubscription={onOpenSubscription} />
+        )}
       </div>
     </div>
   );

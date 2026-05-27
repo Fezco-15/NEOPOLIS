@@ -33,6 +33,7 @@ export default function GamePage() {
   const [activeView, setActiveView] = useState<PlatformView>("home");
   const [subscription, setSubscription] = useState<SubscriptionState>({ status: "free", plan: null, start: null, end: null });
   const [fullReportUnlocked, setFullReportUnlocked] = useState(false);
+  const [testAiUnlocked, setTestAiUnlocked] = useState(false);
 
   useEffect(() => {
     const status = window.localStorage.getItem("neopolis-subscription-status");
@@ -49,10 +50,51 @@ export default function GamePage() {
   const activeMission = careerMissions.find((mission) => mission.id === activeMissionId) ?? careerMissions[0];
   const subscriptionActive = subscription.status === "active";
   const allMissionsCompleted = completedMissionIds.length >= careerMissions.length;
+  const betaMissionIds = careerMissions.filter((mission) => mission.tier !== "premium").slice(0, 3).map((mission) => mission.id);
+
+  function openAiTestReport() {
+    const betaMissions = careerMissions.filter((mission) => mission.tier !== "premium").slice(0, 3);
+    const testAnswers = betaMissions.flatMap((mission, missionIndex) =>
+      mission.scenes.map((scene, sceneIndex) => {
+        const selected = scene.choices[(missionIndex + sceneIndex) % scene.choices.length];
+        return {
+          missionId: mission.id,
+          sceneTitle: scene.title,
+          choice: selected.text,
+          traits: selected.traits,
+          signal: selected.signal
+        };
+      })
+    );
+
+    setAccount((current) => current ?? { name: "Алекс", email: "demo@neopolis.ai", grade: "9 класс" });
+    setAvatar((current) => current ?? {
+      style: "Аналитик",
+      styleImage: "/avatar-analyst.svg",
+      gadget: "Дрон",
+      gadgetImage: "/gadget-drone.svg",
+      approach: "Сначала изучить данные",
+      specialization: "Аналитика"
+    });
+    setAnswers(testAnswers);
+    setCompletedMissionIds(betaMissionIds);
+    setActiveMissionId(betaMissionIds[0] ?? careerMissions[0].id);
+    setActiveView("home");
+    setTestAiUnlocked(true);
+    setStage("report");
+  }
 
   return (
     <main className="relative min-h-screen overflow-hidden">
       <div className="absolute left-1/2 top-16 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-[#FF6B6B]/[0.12] blur-3xl" />
+      <button
+        type="button"
+        onClick={openAiTestReport}
+        className="fixed right-4 top-4 z-[80] rounded-2xl border border-[#FFD166]/35 bg-[#1B0F33]/80 px-4 py-3 text-left text-xs font-black text-white shadow-[0_18px_60px_rgba(255,107,107,0.28)] backdrop-blur-2xl transition hover:-translate-y-0.5 hover:border-[#FF6B6B]/70 hover:bg-[#FF6B6B]/20 sm:right-6 sm:top-6"
+      >
+        <span className="block text-[#FFD166]">Тест AI</span>
+        <span className="block text-white/80">3 миссии + профориентация</span>
+      </button>
       <AnimatePresence mode="wait">
         <motion.div
           key={`${stage}-${activeMissionId}`}
@@ -159,6 +201,7 @@ export default function GamePage() {
                 answers={answers}
                 onBackToMap={() => setStage("app")}
                 onOpenSubscription={() => setStage("subscription")}
+                showAiForTesting={testAiUnlocked}
               />
             </PlatformShell>
           )}
