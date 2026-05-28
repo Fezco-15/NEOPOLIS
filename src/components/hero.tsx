@@ -58,36 +58,36 @@ export function Hero() {
 
       <motion.div
         style={{ y: contentY }}
-        className="container relative flex min-h-screen items-center pb-16 pt-28 sm:pt-32"
+        className="relative flex min-h-screen items-center px-4 pb-10 pt-24 sm:px-8 sm:pb-12 sm:pt-28 lg:px-14 xl:px-20"
       >
         <motion.div
           initial={{ opacity: 0, y: 32, filter: "blur(10px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.85, ease: "easeOut" }}
-          className="max-w-[720px]"
+          className="max-w-[650px] 2xl:max-w-[700px]"
         >
           <motion.div
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.12, duration: 0.65 }}
-            className="inline-flex rounded-full border border-white/18 bg-white/[0.08] px-4 py-2 text-sm font-semibold text-[#EDE7FF] shadow-[0_16px_50px_rgba(167,139,250,.16)] backdrop-blur-2xl"
+            className="inline-flex rounded-full border border-white/18 bg-white/[0.08] px-4 py-2 text-xs font-semibold text-[#EDE7FF] shadow-[0_16px_50px_rgba(167,139,250,.16)] backdrop-blur-2xl sm:text-sm"
           >
             AI-RPG профориентация для 8-11 классов
           </motion.div>
 
-          <h1 className="mt-7 max-w-4xl text-balance bg-gradient-to-r from-[#FF6B6B] via-[#FF9F43] to-[#FFD166] bg-clip-text text-[clamp(3.2rem,8vw,7.8rem)] font-black leading-[0.92] tracking-normal text-transparent drop-shadow-[0_18px_48px_rgba(255,107,107,.22)]">
+          <h1 className="mt-6 max-w-3xl text-balance bg-gradient-to-r from-[#FF6B6B] via-[#FF9F43] to-[#FFD166] bg-clip-text text-[clamp(2.55rem,5.9vw,5.9rem)] font-black leading-[0.95] tracking-normal text-transparent drop-shadow-[0_18px_48px_rgba(255,107,107,.22)]">
             НЕОПОЛИС — город, где подросток находит профессию будущего
           </h1>
 
-          <p className="mt-7 max-w-[620px] text-lg leading-8 text-[#EDE7FF] drop-shadow-[0_2px_16px_rgba(12,8,30,.42)] sm:text-xl">
+          <p className="mt-6 max-w-[590px] text-base leading-7 text-[#EDE7FF] drop-shadow-[0_2px_16px_rgba(12,8,30,.42)] sm:text-lg sm:leading-8">
             AI-RPG платформа профориентации, где школьник проходит сюжетные миссии, исследует районы цифрового города и раскрывает свои сильные стороны.
           </p>
 
-          <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button
               asChild
               size="lg"
-              className="h-14 rounded-[24px] px-7 text-base shadow-[0_18px_52px_rgba(255,107,107,.38)] hover:shadow-[0_0_60px_rgba(255,159,67,.48)]"
+              className="h-13 rounded-[24px] px-6 text-base shadow-[0_18px_52px_rgba(255,107,107,.38)] hover:shadow-[0_0_60px_rgba(255,159,67,.48)] sm:h-14"
             >
               <Link href="/game">
                 <Play className="size-5" />
@@ -98,7 +98,7 @@ export function Hero() {
               asChild
               size="lg"
               variant="secondary"
-              className="h-14 rounded-[24px] border-white/18 bg-white/[0.08] px-7 text-base text-white shadow-[0_18px_52px_rgba(167,139,250,.14)] backdrop-blur-2xl hover:border-[#FF9F43]/60 hover:bg-white/[0.12]"
+              className="h-13 rounded-[24px] border-white/18 bg-white/[0.08] px-6 text-base text-white shadow-[0_18px_52px_rgba(167,139,250,.14)] backdrop-blur-2xl hover:border-[#FF9F43]/60 hover:bg-white/[0.12] sm:h-14"
             >
               <Link href="#how">
                 Посмотреть, как работает
