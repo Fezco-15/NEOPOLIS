@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { AccountRegistration, type AccountState } from "@/components/game/account-registration";
+import { AwakeningNovel } from "@/components/game/awakening-novel";
 import { AvatarCreator, type AvatarState } from "@/components/game/avatar-creator";
 import { GameIntro } from "@/components/game/game-intro";
 import { GameMap } from "@/components/game/game-map";
@@ -15,7 +16,7 @@ import { SubscriptionFlow, type SubscriptionState } from "@/components/game/subs
 import { SubscriptionSuccess } from "@/components/game/subscription-success";
 import { FullReportScreen } from "@/components/game/full-report-screen";
 
-type Stage = "intro" | "register" | "avatar" | "app" | "mission" | "report" | "subscription" | "subscriptionSuccess" | "fullReport";
+type Stage = "intro" | "register" | "avatar" | "awakeningNovel" | "app" | "mission" | "report" | "subscription" | "subscriptionSuccess" | "fullReport";
 
 const variants = {
   initial: { opacity: 0, y: 24 },
@@ -34,9 +35,11 @@ export default function GamePage() {
   const [subscription, setSubscription] = useState<SubscriptionState>({ status: "free", plan: null, start: null, end: null });
   const [fullReportUnlocked, setFullReportUnlocked] = useState(false);
   const [testAiUnlocked, setTestAiUnlocked] = useState(false);
+  const [awakeningComplete, setAwakeningComplete] = useState(false);
 
   useEffect(() => {
     const status = window.localStorage.getItem("neopolis-subscription-status");
+    setAwakeningComplete(window.localStorage.getItem("neopolis-awakening-complete") === "true");
     if (status === "active") {
       setSubscription({
         status: "active",
@@ -118,6 +121,24 @@ export default function GamePage() {
             <AvatarCreator
               onComplete={(nextAvatar) => {
                 setAvatar(nextAvatar);
+                setActiveView("home");
+                setStage(awakeningComplete || window.localStorage.getItem("neopolis-awakening-complete") === "true" ? "app" : "awakeningNovel");
+              }}
+            />
+          )}
+          {stage === "awakeningNovel" && (
+            <AwakeningNovel
+              account={account}
+              avatar={avatar}
+              onComplete={(introAnswers) => {
+                setAwakeningComplete(true);
+                setAnswers((current) => [...current, ...introAnswers]);
+                setActiveMissionId(careerMissions[0].id);
+                setActiveView("home");
+                setStage("mission");
+              }}
+              onSkip={() => {
+                setAwakeningComplete(true);
                 setActiveView("home");
                 setStage("app");
               }}
