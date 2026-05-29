@@ -18,7 +18,13 @@ export function AccountRegistration({ onComplete }: { onComplete: (account: Acco
     grade: "9 класс"
   });
 
-  const canSubmit = account.name.trim().length > 1 && account.email.includes("@");
+  function completeRegistration() {
+    onComplete({
+      name: account.name.trim() || "Алекс",
+      email: account.email.includes("@") ? account.email : "demo@neopolis.ai",
+      grade: account.grade
+    });
+  }
 
   return (
     <div className="grid min-h-screen place-items-center px-4 py-20">
@@ -40,7 +46,7 @@ export function AccountRegistration({ onComplete }: { onComplete: (account: Acco
               className="grid flex-1 gap-4"
               onSubmit={(event) => {
                 event.preventDefault();
-                if (canSubmit) onComplete(account);
+                completeRegistration();
               }}
             >
               <label className="grid gap-2 text-sm font-semibold text-slate-200">
@@ -76,7 +82,7 @@ export function AccountRegistration({ onComplete }: { onComplete: (account: Acco
                   ))}
                 </select>
               </label>
-              <Button disabled={!canSubmit} className="mt-2 w-full" size="lg">
+              <Button className="mt-2 w-full" size="lg">
                 Перейти к аватару
                 <ArrowRight className="size-5" />
               </Button>

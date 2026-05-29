@@ -39,7 +39,8 @@ export default function GamePage() {
 
   useEffect(() => {
     const status = window.localStorage.getItem("neopolis-subscription-status");
-    setAwakeningComplete(window.localStorage.getItem("neopolis-awakening-complete") === "true");
+    window.localStorage.removeItem("neopolis-awakening-complete");
+    setAwakeningComplete(false);
     if (status === "active") {
       setSubscription({
         status: "active",
