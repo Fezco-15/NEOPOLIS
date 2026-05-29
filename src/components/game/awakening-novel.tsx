@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Activity, ArrowRight, Bot, BrainCircuit, CheckCircle2, Map, Pause, Radio, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { Activity, ArrowRight, Bot, BrainCircuit, Map, Pause, Radio, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { AccountState } from "@/components/game/account-registration";
 import type { AvatarState } from "@/components/game/avatar-creator";
@@ -53,6 +53,49 @@ const firstChoices = [
     text: "Попытаться перезапустить дрон самостоятельно",
     traits: ["инициативность", "техническое мышление", "самостоятельность"],
     signal: "Вы берете задачу на себя и пробуете техническое решение."
+  }
+];
+
+const firstSignalChoices = [
+  {
+    text: "Помочь немедленно",
+    title: "Помочь немедленно",
+    description: "Сначала спасти ситуацию и помочь пострадавшим.",
+    detail: "Приоритет — спасение данных и помощь на месте.",
+    image: "/choice-help-now.png",
+    accent: "#FF6B6B",
+    traits: ["эмпатия", "реакция", "ответственность"],
+    signal: "Ты предпочитаешь действовать сразу, когда видишь проблему."
+  },
+  {
+    text: "Найти причину",
+    title: "Найти причину",
+    description: "Разобраться, почему произошел сбой.",
+    detail: "Выяснить причину падения и оценить риски.",
+    image: "/choice-analyze-cause.png",
+    accent: "#00D1C6",
+    traits: ["аналитика", "системность", "причинно-следственное мышление"],
+    signal: "Ты стремишься понять систему прежде чем действовать."
+  },
+  {
+    text: "Собрать команду",
+    title: "Собрать команду",
+    description: "Подключить других людей и решить проблему вместе.",
+    detail: "Координировать действия и привлечь экспертов.",
+    image: "/choice-build-team.png",
+    accent: "#A78BFA",
+    traits: ["командность", "лидерство", "коммуникация"],
+    signal: "Ты видишь силу в совместных решениях."
+  },
+  {
+    text: "Исправить самому",
+    title: "Исправить самому",
+    description: "Попытаться восстановить систему своими силами.",
+    detail: "Использовать свои навыки и инструменты, чтобы восстановить систему.",
+    image: "/choice-fix-alone.png",
+    accent: "#FF9F43",
+    traits: ["инициативность", "техническое мышление", "самостоятельность"],
+    signal: "Ты склонен брать ответственность на себя."
   }
 ];
 
@@ -160,7 +203,7 @@ export function AwakeningNovel({
   const progress = Math.round(((sceneIndex + 1) / scenes.length) * 100);
 
   const playerName = account?.name?.trim() || "новый житель";
-  const selected = selectedChoice === null ? null : firstChoices[selectedChoice];
+  const selected = selectedChoice === null ? null : firstSignalChoices[selectedChoice];
 
   const firstAnswer = useMemo<MissionAnswer[]>(() => {
     if (!selected || !choiceLocked) return [];
@@ -196,6 +239,23 @@ export function AwakeningNovel({
       return;
     }
     setSceneIndex((current) => current + 1);
+  }
+
+  function continueFromFirstSignal() {
+    if (selectedChoice === null) return;
+    setChoiceLocked(true);
+    setSceneIndex((current) => current + 1);
+  }
+
+  if (scene.mode === "choice") {
+    return (
+      <FirstSignalMissionScreen
+        selectedChoice={selectedChoice}
+        onChoice={setSelectedChoice}
+        onContinue={continueFromFirstSignal}
+        onSkip={skipIntro}
+      />
+    );
   }
 
   return (
@@ -254,13 +314,9 @@ export function AwakeningNovel({
               </div>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Button onClick={next} disabled={scene.mode === "choice" && selectedChoice === null} size="lg" className="min-w-56">
-                  {scene.mode === "choice" && !choiceLocked
-                    ? "Зафиксировать сигнал"
-                    : scene.mode === "warning"
-                      ? "Подключиться к ТехноКварталу"
-                      : "Продолжить"}
-                  {scene.mode === "choice" && !choiceLocked ? <CheckCircle2 className="size-5" /> : <ArrowRight className="size-5" />}
+                <Button onClick={next} size="lg" className="min-w-56">
+                  {scene.mode === "warning" ? "Подключиться к ТехноКварталу" : "Продолжить"}
+                  <ArrowRight className="size-5" />
                 </Button>
                 <div className="flex min-w-52 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-sm font-bold text-white/66">
                   <Pause className="size-4 text-[#FF9F43]" />
@@ -295,6 +351,189 @@ function OrionSignal({ warning }: { warning: boolean }) {
         transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
       />
       <Bot className={cn("relative size-8", warning ? "text-[#FF6B6B]" : "text-[#00D1C6]")} />
+    </div>
+  );
+}
+
+function FirstSignalMissionScreen({
+  selectedChoice,
+  onChoice,
+  onContinue,
+  onSkip
+}: {
+  selectedChoice: number | null;
+  onChoice: (index: number) => void;
+  onContinue: () => void;
+  onSkip: () => void;
+}) {
+  const selected = selectedChoice === null ? null : firstSignalChoices[selectedChoice];
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-[#1B0F33] text-white">
+      <Image src="/awakening-drone-bg.png" alt="Авария медицинского дрона в НЕОПОЛИСЕ" fill priority className="object-cover" />
+      <div className="absolute inset-0 bg-[#1B0F33]/72" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(255,107,107,.22),transparent_28%),radial-gradient(circle_at_78%_18%,rgba(167,139,250,.22),transparent_30%),linear-gradient(180deg,rgba(27,15,51,.2),rgba(27,15,51,.62))]" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {Array.from({ length: 14 }, (_, index) => (
+          <motion.span
+            key={index}
+            className="absolute h-px rounded-full bg-[#FFD166]/70 shadow-[0_0_18px_rgba(255,209,102,.75)]"
+            style={{
+              left: `${8 + index * 7}%`,
+              top: `${12 + (index % 6) * 13}%`,
+              width: 18 + (index % 4) * 16
+            }}
+            animate={{ x: [0, 32, 0], opacity: [0.15, 0.8, 0.15] }}
+            transition={{ duration: 5 + index * 0.18, repeat: Infinity, ease: "easeInOut" }}
+          />
+        ))}
+      </div>
+
+      <div className="relative flex min-h-screen flex-col px-4 py-5 sm:px-6 lg:px-8">
+        <div className="grid items-start gap-4 lg:grid-cols-[1fr_auto_1fr]">
+          <div className="w-fit rounded-2xl border border-[#A78BFA]/40 bg-[#1B0F33]/58 px-4 py-3 shadow-[0_18px_58px_rgba(167,139,250,.18)] backdrop-blur-2xl">
+            <div className="flex items-center gap-3">
+              <Sparkles className="size-5 text-[#FF6B6B]" />
+              <p className="text-sm font-black uppercase text-[#FF9F43]">Миссия 1 / Первый выбор</p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#A78BFA]/35 bg-[#1B0F33]/66 px-5 py-4 shadow-[0_22px_70px_rgba(12,8,30,.34)] backdrop-blur-2xl lg:min-w-[420px]">
+            <div className="flex items-center gap-4">
+              <OrionSignal warning={false} />
+              <div>
+                <p className="text-xl font-black text-white">ORION</p>
+                <p className="mt-1 text-lg font-bold text-white">Как ты поступишь?</p>
+                <p className="mt-1 text-sm font-semibold text-[#CDBBFF]">Выбери действие. Правильного ответа нет.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="justify-self-start rounded-2xl border border-white/12 bg-[#1B0F33]/58 p-4 shadow-[0_18px_58px_rgba(167,139,250,.16)] backdrop-blur-2xl lg:justify-self-end">
+            <div className="flex items-center gap-4">
+              <div>
+                <p className="text-sm font-black text-white">Твой прогресс</p>
+                <p className="mt-2 text-lg font-black text-[#EDE7FF]">0 / 10 сигналов</p>
+              </div>
+              <div className="relative grid size-16 place-items-center rounded-full border border-[#A78BFA]/35 bg-[#A78BFA]/10">
+                <motion.div className="absolute inset-2 rounded-full border border-[#FF6B6B]/50" animate={{ rotate: 360 }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} />
+                <span className="size-3 rounded-full bg-[#FF6B6B] shadow-[0_0_22px_rgba(255,107,107,.9)]" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid flex-1 items-end gap-6 py-6 xl:grid-cols-[0.42fr_0.58fr]">
+          <motion.aside
+            initial={{ opacity: 0, x: -24, filter: "blur(10px)" }}
+            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+            className="rounded-[24px] border border-white/14 bg-[#1B0F33]/62 p-5 shadow-[0_28px_90px_rgba(12,8,30,.42)] backdrop-blur-2xl sm:p-7"
+          >
+            <Badge>Пробуждение НЕОПОЛИСА</Badge>
+            <p className="mt-4 text-sm font-black uppercase tracking-[0.22em] text-[#FF6B6B]">Первый сигнал системы</p>
+            <h1 className="mt-3 text-3xl font-black text-white sm:text-4xl">Экстренный сигнал</h1>
+            <div className="mt-5 grid gap-4 text-base leading-7 text-[#EDE7FF]">
+              <p>Во время подключения к НЕОПОЛИСУ система фиксирует аварию.</p>
+              <p>Дрон медицинской доставки потерял управление и упал рядом с транспортной магистралью.</p>
+              <p>Внутри находятся важные медицинские данные.</p>
+              <p>ORION наблюдает за твоим решением.</p>
+              <p className="font-black text-[#FFD166]">Правильного ответа нет. Система изучает твой стиль мышления.</p>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-[#A78BFA]/25 bg-[#A78BFA]/10 p-4">
+              <div className="flex gap-3">
+                <Bot className="mt-1 size-6 shrink-0 text-[#FFD166]" />
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.22em] text-[#FFD166]">ORION</p>
+                  <p className="mt-2 text-sm font-bold leading-6 text-white/78">Каждое решение рассказывает о тебе больше, чем любой тест.</p>
+                </div>
+              </div>
+            </div>
+
+            <Button disabled={!selected} onClick={onContinue} className="mt-6 w-full" size="lg">
+              Принять решение
+              <ArrowRight className="size-5" />
+            </Button>
+          </motion.aside>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {firstSignalChoices.map((choice, index) => {
+              const active = selectedChoice === index;
+              return (
+                <motion.button
+                  key={choice.title}
+                  type="button"
+                  onClick={() => onChoice(index)}
+                  initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  transition={{ delay: index * 0.08, duration: 0.45 }}
+                  whileHover={{ scale: 1.03 }}
+                  className={cn(
+                    "group relative min-h-[220px] overflow-hidden rounded-[24px] border p-0 text-left shadow-[0_24px_80px_rgba(12,8,30,.36)] transition",
+                    active ? "border-[#FFD166] shadow-[0_0_58px_rgba(255,209,102,.32)]" : "border-white/14 hover:border-[#FF9F43]/70 hover:shadow-[0_0_54px_rgba(255,107,107,.26)]"
+                  )}
+                >
+                  <Image src={choice.image} alt={choice.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#120B2C]/92 via-[#120B2C]/38 to-transparent" />
+                  <div className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${choice.accent}, transparent)` }} />
+                  <div className="relative flex h-full min-h-[220px] flex-col justify-between p-5">
+                    <div className="flex items-start gap-4">
+                      <span className="grid size-14 shrink-0 place-items-center rounded-2xl border text-3xl font-black text-white shadow-[0_0_30px_rgba(255,107,107,.28)]" style={{ borderColor: choice.accent, background: `${choice.accent}33` }}>
+                        {index + 1}
+                      </span>
+                      <div>
+                        <h2 className="text-2xl font-black leading-tight text-white">{choice.title}</h2>
+                        <p className="mt-3 text-sm font-semibold leading-6 text-white/82">{choice.description}</p>
+                      </div>
+                    </div>
+                    <p className="max-w-[280px] text-sm font-semibold leading-5 text-white/72">{choice.detail}</p>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="pb-2 text-center text-sm font-semibold text-[#CDBBFF]">
+          AI система анализирует твой выбор и стиль решения
+        </div>
+
+        <button
+          type="button"
+          onClick={onSkip}
+          className="absolute bottom-5 right-5 rounded-2xl border border-white/12 bg-white/[0.06] px-4 py-3 text-sm font-black text-white/66 backdrop-blur-2xl transition hover:border-[#FF9F43]/50 hover:text-white"
+        >
+          Пропустить интро
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            className="fixed inset-0 z-[90] grid place-items-center bg-[#1B0F33]/70 p-4 backdrop-blur-[6px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 26, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 18, scale: 0.96 }}
+              className="w-full max-w-xl rounded-[28px] border border-[#A78BFA]/35 bg-[#1B0F33]/82 p-6 text-center shadow-[0_30px_120px_rgba(12,8,30,.58)] backdrop-blur-2xl"
+            >
+              <OrionSignal warning={false} />
+              <p className="mt-5 text-xs font-black uppercase tracking-[0.28em] text-[#FFD166]">ORION</p>
+              <h2 className="mt-3 text-3xl font-black text-white">Сигнал зафиксирован</h2>
+              <p className="mt-4 text-lg leading-8 text-[#EDE7FF]">{selected.signal}</p>
+              <Button onClick={onContinue} className="mt-7" size="lg">
+                Продолжить исследование
+                <ArrowRight className="size-5" />
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

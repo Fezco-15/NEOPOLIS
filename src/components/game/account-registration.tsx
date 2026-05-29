@@ -82,7 +82,7 @@ export function AccountRegistration({ onComplete }: { onComplete: (account: Acco
                   ))}
                 </select>
               </label>
-              <Button className="mt-2 w-full" size="lg">
+              <Button type="submit" className="mt-2 w-full" size="lg">
                 Перейти к аватару
                 <ArrowRight className="size-5" />
               </Button>
