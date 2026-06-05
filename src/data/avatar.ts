@@ -26,6 +26,15 @@ export type AvatarOption = {
   future?: string[];
 };
 
+export type AvatarProfileSignal = {
+  source: string;
+  label: string;
+  value: string;
+  qualities: string[];
+  careerDomains: string[];
+  aiSignal: string;
+};
+
 export const archetypes: AvatarOption[] = [
   {
     id: "analyst",
@@ -237,4 +246,80 @@ export const defaultAvatarConfig: AvatarConfig = {
 
 export function findAvatarOption(items: AvatarOption[], id: string) {
   return items.find((item) => item.id === id) ?? items[0];
+}
+
+export function buildAvatarProfileSignals(config: AvatarConfig): AvatarProfileSignal[] {
+  const archetype = findAvatarOption(archetypes, config.archetype);
+  const style = findAvatarOption(visualStyles, config.visualStyle);
+  const aura = findAvatarOption(auras, config.aura);
+  const gadget = findAvatarOption(gadgets, config.gadget);
+  const interaction = findAvatarOption(interactionStyles, config.interactionStyle);
+  const specialization = findAvatarOption(specializations, config.specialization);
+
+  const appearanceValues = Object.values(config.appearance);
+  const expressiveAppearance = appearanceValues.filter((value) =>
+    ["Яркие", "Коралловый", "Фиолетовый", "Легкая мантия", "Digital backpack", "Любопытное"].includes(value)
+  ).length;
+  const focusedAppearance = appearanceValues.filter((value) =>
+    ["Спокойные", "Внимательные", "Сфокусированные", "Темный", "Пиджак", "Очки", "Сосредоточенное"].includes(value)
+  ).length;
+
+  return [
+    {
+      source: "avatar.archetype",
+      label: "Стартовый архетип",
+      value: archetype.name,
+      qualities: archetype.bonuses ?? [],
+      careerDomains: [archetype.name, ...(archetype.bonuses ?? [])],
+      aiSignal: `Игрок выбрал архетип «${archetype.name}»: ${archetype.description}`
+    },
+    {
+      source: "avatar.visualStyle",
+      label: "Визуальный стиль",
+      value: style.name,
+      qualities: style.id === "creative" || style.id === "cyber" ? ["самопрезентация", "креативность"] : ["осознанная самопрезентация"],
+      careerDomains: style.id === "creative" ? ["дизайн", "медиа"] : style.id === "academic" ? ["исследование", "аналитика"] : ["digital-среда"],
+      aiSignal: `Визуальный стиль «${style.name}» показывает предпочитаемый способ самопрезентации: ${style.description}`
+    },
+    {
+      source: "avatar.appearance",
+      label: "Детали внешности",
+      value: appearanceValues.join(", "),
+      qualities: expressiveAppearance > focusedAppearance ? ["экспрессивность", "открытость к эксперименту"] : ["фокус", "аккуратность"],
+      careerDomains: expressiveAppearance > focusedAppearance ? ["креативные индустрии", "коммуникация"] : ["аналитика", "инженерная логика"],
+      aiSignal: `Детали образа дают мягкий сигнал самопрезентации: ${appearanceValues.join(", ")}.`
+    },
+    {
+      source: "avatar.aura",
+      label: "Цветовая аура",
+      value: aura.name,
+      qualities: aura.description.split(" и "),
+      careerDomains: [aura.description],
+      aiSignal: `Аура «${aura.name}» связана с направлением «${aura.description}».`
+    },
+    {
+      source: "avatar.gadget",
+      label: "Стартовый гаджет",
+      value: gadget.name,
+      qualities: gadget.bonuses ?? [],
+      careerDomains: gadget.bonuses ?? [],
+      aiSignal: `Гаджет «${gadget.name}» показывает инструментальный интерес: ${gadget.description}`
+    },
+    {
+      source: "avatar.interactionStyle",
+      label: "Стиль взаимодействия",
+      value: interaction.name,
+      qualities: interaction.bonuses ?? [],
+      careerDomains: interaction.bonuses ?? [],
+      aiSignal: `Стиль действия «${interaction.name}»: ${interaction.description}`
+    },
+    {
+      source: "avatar.specialization",
+      label: "Первая специализация",
+      value: specialization.name,
+      qualities: specialization.future ?? [],
+      careerDomains: [specialization.name, ...(specialization.future ?? [])],
+      aiSignal: `Первая область интереса «${specialization.name}»: ${specialization.description}`
+    }
+  ];
 }

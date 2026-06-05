@@ -6,6 +6,7 @@ import { careerReport, betaMissions } from "@/data/site";
 import type { AccountState } from "@/components/game/account-registration";
 import type { AvatarState } from "@/components/game/avatar-creator";
 import type { MissionAnswer } from "@/components/game/mission-screen";
+import type { TechnoQuarterCompletion } from "@/components/mission-lab/techno-quarter-app";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,7 @@ export function ResultScreen({
   account,
   avatar,
   answers,
+  technoQuarter,
   onBackToMap,
   onOpenSubscription,
   showAiForTesting = false
@@ -42,11 +44,14 @@ export function ResultScreen({
   account: AccountState | null;
   avatar: AvatarState | null;
   answers: MissionAnswer[];
+  technoQuarter?: TechnoQuarterCompletion | null;
   onBackToMap: () => void;
   onOpenSubscription: () => void;
   showAiForTesting?: boolean;
 }) {
   const topTraits = getTopTraits(answers);
+  const technoDecisions = technoQuarter?.state.decisions ?? [];
+  const technoStrengths = technoQuarter?.summary.strengths ?? [];
   const totalXp = betaMissions.reduce((sum, mission) => sum + mission.xp, 0);
   const previewCareers = ["системная аналитика", "data-направление", "product/UX research", "цифровые коммуникации"];
   const adjacentAreas = ["продуктовый менеджмент", "бизнес-анализ", "EdTech-дизайн", "BI-аналитика", "медиааналитика"];
@@ -95,7 +100,7 @@ export function ResultScreen({
               <h2 className="text-2xl font-black text-white">Полный предварительный результат</h2>
               <p className="mt-4 text-lg leading-8 text-slate-300">{careerReport.about}</p>
               <div className="mt-5 flex flex-wrap gap-2">
-                {[...new Set([...topTraits, ...careerReport.strengths])].slice(0, 10).map((trait) => (
+                {[...new Set([...topTraits, ...technoStrengths, ...careerReport.strengths])].slice(0, 10).map((trait) => (
                   <Badge key={trait}>{trait}</Badge>
                 ))}
               </div>
@@ -184,16 +189,18 @@ export function ResultScreen({
         {showAiForTesting ? (
           <Card className="mt-6 border-[#00D1C6]/35">
             <CardContent className="p-6 sm:p-8">
-              <Badge>Тестовый режим</Badge>
-              <h2 className="mt-4 text-2xl font-black text-white">AI-анализ открыт для проверки</h2>
+              <Badge>Первичный профиль</Badge>
+              <h2 className="mt-4 text-2xl font-black text-white">Первые рекомендации по маршруту</h2>
               <p className="mt-3 leading-7 text-slate-300">
-                Этот блок получает 15 тестовых решений из первых трех beta-миссий. Так можно быстро проверить, что нейросеть анализирует реальные выборы игрока.
+                {technoQuarter
+                  ? `Профиль собран по аватару и ${technoDecisions.length} решениям из первой сюжетной миссии.`
+                  : "Профиль собран по решениям первых миссий и выбранному маршруту игрока."}
               </p>
-              <AiCareerAnalysis account={account} avatar={avatar} answers={answers} />
+              <AiCareerAnalysis account={account} avatar={avatar} answers={answers} technoQuarter={technoQuarter} />
             </CardContent>
           </Card>
         ) : (
-          <PremiumAiAnalysisGate account={account} avatar={avatar} answers={answers} onOpenSubscription={onOpenSubscription} />
+          <PremiumAiAnalysisGate account={account} avatar={avatar} answers={answers} technoQuarter={technoQuarter} onOpenSubscription={onOpenSubscription} />
         )}
       </div>
     </div>
@@ -204,17 +211,19 @@ function PremiumAiAnalysisGate({
   account,
   avatar,
   answers,
+  technoQuarter,
   onOpenSubscription
 }: {
   account: AccountState | null;
   avatar: AvatarState | null;
   answers: MissionAnswer[];
+  technoQuarter?: TechnoQuarterCompletion | null;
   onOpenSubscription: () => void;
 }) {
   return (
     <div className="relative mt-6 overflow-hidden rounded-2xl border border-[#A78BFA]/25">
       <div className="pointer-events-none select-none blur-[4px] opacity-55">
-        <AiCareerAnalysis account={account} avatar={avatar} answers={answers} />
+        <AiCareerAnalysis account={account} avatar={avatar} answers={answers} technoQuarter={technoQuarter} />
       </div>
       <div className="absolute inset-0 grid place-items-center bg-[#1B0F33]/60 p-6 text-center backdrop-blur-[3px]">
         <div className="max-w-xl">

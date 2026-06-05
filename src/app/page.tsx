@@ -14,16 +14,26 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main>
+      <main className="neopolis-landing-scene">
+        <div className="neopolis-light-particles" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
         <Hero />
         <ProblemSection />
         <SolutionSection />
-        <HowItWorks />
-        <CityMap />
-        <FreeDemoSection />
-        <ParentSection />
-        <FuturePassport />
-        <CTA />
+        <div className="neopolis-depth-deep">
+          <HowItWorks />
+          <CityMap />
+          <FreeDemoSection />
+          <ParentSection />
+          <FuturePassport />
+          <CTA />
+        </div>
       </main>
       <Footer />
     </>

@@ -65,7 +65,7 @@ export function AppearanceCustomizer({ config, update, accent }: { config: Avata
   }
 
   return (
-    <StepShell title="Создай свой образ" subtitle="Настрой детали внешности. Это не влияет на диагностику, но делает профиль личным.">
+    <StepShell title="Создай свой образ" subtitle="Настрой детали внешности, чтобы персонаж ощущался твоим.">
       <div className="flex flex-wrap gap-2">
         {appearanceTabs.map((item) => (
           <button
@@ -143,7 +143,7 @@ export function AuraSelector({ config, update }: { config: AvatarConfig; update:
 
 export function GadgetSelector({ config, update, accent }: { config: AvatarConfig; update: UpdateAvatar; accent: string }) {
   return (
-    <StepShell title="Выбери стартовый гаджет" subtitle="Гаджет добавляет первый бонус и сопровождает персонажа в миссиях.">
+    <StepShell title="Выбери стартовый гаджет" subtitle="Гаджет будет сопровождать персонажа в первых миссиях.">
       <div className="grid gap-3 sm:grid-cols-2">
         {gadgets.map((option) => (
           <OptionCard
@@ -161,7 +161,7 @@ export function GadgetSelector({ config, update, accent }: { config: AvatarConfi
 
 export function InteractionSelector({ config, update, accent }: { config: AvatarConfig; update: UpdateAvatar; accent: string }) {
   return (
-    <StepShell title="Как тебе комфортнее действовать?" subtitle="Этот выбор помогает системе сравнить заявленный стиль с решениями в миссиях.">
+    <StepShell title="Как тебе комфортнее действовать?" subtitle="Выбери стиль, который ближе твоему персонажу в сложной ситуации.">
       <div className="grid gap-3 sm:grid-cols-2">
         {interactionStyles.map((option) => (
           <OptionCard

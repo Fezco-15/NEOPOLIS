@@ -16,6 +16,7 @@ type MapDistrict = {
   subtitle: string;
   available: boolean;
   tier?: "free" | "premium";
+  teaser?: boolean;
   mission?: string;
   description?: string;
   skills?: string[];
@@ -32,9 +33,9 @@ const mapDistricts: MapDistrict[] = [
     subtitle: "технологии, ИИ, робототехника",
     available: true,
     tier: "free",
-    mission: "Сбой транспортной сети",
-    description: "Восстанови автоматические поезда и найди сбой в городской транспортной системе.",
-    skills: ["системное мышление", "аналитика", "технологии", "инженерная логика"],
+    mission: "Атакующий код",
+    description: "Первая сюжетная миссия завершена: разбитый дрон, сбой Кортекса и твой маршрут через инженерную, аналитическую, лидерскую или исследовательскую ветку.",
+    skills: ["системное мышление", "решения в кризисе", "AI-сигналы", "профориентация"],
     x: 30,
     y: 29
   },
@@ -45,8 +46,9 @@ const mapDistricts: MapDistrict[] = [
     subtitle: "медиа, коммуникации, креатив",
     available: true,
     tier: "free",
+    teaser: true,
     mission: "Информационная паника",
-    description: "Останови волну фейков и собери понятную коммуникацию для жителей города.",
+    description: "В будущей beta-миссии игрок будет разбирать фейки, эмоциональные всплески горожан и выбирать стратегию коммуникации: успокоить, раскрыть правду, собрать редакцию или построить доверие через данные.",
     skills: ["критическое мышление", "медиа", "коммуникация", "сторителлинг"],
     x: 17,
     y: 55
@@ -58,8 +60,9 @@ const mapDistricts: MapDistrict[] = [
     subtitle: "данные, аналитика, стратегия",
     available: true,
     tier: "free",
+    teaser: true,
     mission: "Пропавшие данные Навигатора",
-    description: "Восстанови данные Центрального Навигатора и собери карьерные гипотезы.",
+    description: "В будущей beta-миссии игрок будет искать пропавшие фрагменты городской памяти, сравнивать версии событий и собирать аналитическую модель, которая покажет скрытую причину сбоя.",
     skills: ["анализ данных", "стратегия", "моделирование", "исследование"],
     x: 46,
     y: 55
@@ -148,6 +151,7 @@ function MissionModal({
   onClose: () => void;
   onStart: () => void;
 }) {
+  const teaser = Boolean(district.teaser);
   return (
     <motion.div
       className="fixed inset-0 z-50 grid place-items-center bg-black/62 px-4 backdrop-blur-md"
@@ -182,8 +186,8 @@ function MissionModal({
             {district.skills?.map((skill) => <Badge key={skill}>{skill}</Badge>)}
           </div>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Button onClick={onStart} disabled={completed} className="flex-1" size="lg">
-              {completed ? "Миссия завершена" : "Начать"}
+            <Button onClick={onStart} disabled={completed || teaser} className="flex-1" size="lg">
+              {completed ? "Миссия завершена" : teaser ? "Скоро в beta" : "Начать"}
               <Play className="size-5" />
             </Button>
             <Button onClick={onClose} variant="secondary" className="flex-1" size="lg">
@@ -343,8 +347,10 @@ export function GameMap({
   onOpenSubscription: () => void;
 }) {
   const [selectedDistrict, setSelectedDistrict] = useState<MapDistrict | null>(null);
-  const allCompleted = completedMissionIds.length >= careerMissions.length;
-  const progress = Math.round((completedMissionIds.length / careerMissions.length) * 100);
+  const betaMissionCount = 3;
+  const betaCompletedCount = Math.min(completedMissionIds.length, betaMissionCount);
+  const allCompleted = betaCompletedCount >= betaMissionCount;
+  const progress = Math.round((betaCompletedCount / betaMissionCount) * 100);
 
   const nextMission = useMemo(() => {
     return careerMissions.find((mission) => {
@@ -366,7 +372,7 @@ export function GameMap({
       onOpenReport();
       return;
     }
-    if (!subscriptionActive && completedMissionIds.length >= 3) {
+    if (!subscriptionActive && betaCompletedCount >= betaMissionCount) {
       onOpenReport();
       return;
     }
@@ -445,7 +451,7 @@ export function GameMap({
         >
           <p className="text-[clamp(.6rem,.78vw,.85rem)] font-black uppercase text-[#FF6B6B]">Твой прогресс</p>
           <ProgressRing progress={progress} />
-          <p className="mt-1 text-center text-[clamp(.6rem,.78vw,.85rem)] font-semibold text-[#FFF3E0]">{completedMissionIds.length} из 10 районов пройдено</p>
+          <p className="mt-1 text-center text-[clamp(.6rem,.78vw,.85rem)] font-semibold text-[#FFF3E0]">{betaCompletedCount} из 3 beta-миссий пройдено</p>
           <div className="mt-[clamp(.45rem,.8vw,1rem)] h-1.5 overflow-hidden rounded-full bg-slate-800">
             <div className="h-full rounded-full bg-[#FF6B6B]" style={{ width: `${progress}%` }} />
           </div>
@@ -459,14 +465,14 @@ export function GameMap({
         >
           <p className="text-[clamp(.6rem,.78vw,.85rem)] font-black uppercase text-[#FF6B6B]">Текущее задание</p>
           <p className="mt-[clamp(.7rem,1.2vw,1.25rem)] text-[clamp(.62rem,.78vw,.88rem)] leading-6 text-[#FFF3E0]">
-            Продолжай миссии, чтобы открыть новые районы Неополиса
+            Первая миссия завершена. Следующие beta-миссии пока открыты как анонсы.
           </p>
           <button
             type="button"
             onClick={continueMission}
             className="mt-[clamp(.65rem,1vw,1rem)] flex w-full items-center justify-between rounded-2xl border border-[#FF6B6B]/20 bg-[#FF6B6B]/10 px-4 py-3 text-[clamp(.62rem,.78vw,.88rem)] font-black text-[#FF6B6B] transition hover:bg-[#FF6B6B]/18"
           >
-            {allCompleted ? "Полный отчет" : !subscriptionActive && completedMissionIds.length >= 3 ? "Предварительный профиль" : "Продолжить"}
+            {allCompleted ? "Полный отчет" : !subscriptionActive && betaCompletedCount >= betaMissionCount ? "Предварительный профиль" : "Что дальше"}
             <ChevronRight className="size-5" />
           </button>
         </motion.div>

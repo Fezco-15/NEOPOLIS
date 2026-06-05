@@ -63,15 +63,6 @@ export function OptionCard({
             )}
           </div>
           <p className="mt-2 text-sm leading-6 text-white/70">{option.description}</p>
-          {option.bonuses && (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {option.bonuses.map((bonus) => (
-                <span key={bonus} className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-white/80">
-                  + {bonus}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </motion.button>

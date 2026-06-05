@@ -208,7 +208,7 @@ export function PlatformShell({
         subscription={subscription}
       />
 
-      <main className="relative z-10 min-h-screen lg:pl-[260px]">
+      <main className="relative z-10 min-h-screen lg:pl-[88px]">
         <AnimatePresence mode="wait">
           <Page key={activeView}>{page}</Page>
         </AnimatePresence>
@@ -274,20 +274,23 @@ function Sidebar({
       </AnimatePresence>
       <motion.aside
         className={cn(
-          "fixed bottom-0 left-0 top-0 z-50 w-[260px] border-r p-4 backdrop-blur-2xl transition lg:translate-x-0",
+          "fixed bottom-0 left-0 top-0 z-50 w-[260px] border-r p-4 backdrop-blur-2xl transition lg:w-[88px] lg:translate-x-0 lg:px-3",
           theme === "dark"
             ? "border-white/10 bg-[#1B0F33]/86"
             : "border-[#121A2E]/10 bg-white/88",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-2xl font-black tracking-wide" style={{ color: "#FF6B6B" }}>
+        <div className="flex items-center justify-between lg:justify-center">
+          <div className="lg:text-center">
+            <p className="text-2xl font-black tracking-wide lg:grid lg:size-12 lg:place-items-center lg:rounded-2xl lg:border lg:border-[#FF6B6B]/25 lg:bg-[#FF6B6B]/10 lg:text-xl" style={{ color: "#FF6B6B" }}>
+              <span className="lg:hidden">
               НЕОПОЛИС
+              </span>
+              <span className="hidden lg:inline">Н</span>
             </p>
-            <p className="text-xs font-semibold opacity-70">Архитектор будущего</p>
-            <p className={cn("mt-2 inline-flex rounded-full px-2.5 py-1 text-[11px] font-black", subscription.status === "active" ? "bg-[#00D1C6]/15 text-[#8cffef]" : "bg-[#FFD166]/15 text-[#FFD166]")}>
+            <p className="text-xs font-semibold opacity-70 lg:hidden">Архитектор будущего</p>
+            <p className={cn("mt-2 inline-flex rounded-full px-2.5 py-1 text-[11px] font-black lg:size-3 lg:p-0 lg:text-transparent", subscription.status === "active" ? "bg-[#00D1C6]/15 text-[#8cffef]" : "bg-[#FFD166]/15 text-[#FFD166]")}>
               {subscription.status === "active" ? "Premium active" : "Free beta"}
             </p>
           </div>
@@ -296,7 +299,7 @@ function Sidebar({
           </button>
         </div>
 
-        <nav className="mt-8 grid gap-2">
+        <nav className="mt-8 grid gap-2 lg:justify-items-center">
           {platformNav.map((item) => {
             const active = activeView === item.id;
             return (
@@ -305,29 +308,51 @@ function Sidebar({
                 type="button"
                 onClick={() => onViewChange(item.id)}
                 className={cn(
-                  "flex items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-bold transition hover:translate-x-1",
+                  "group relative flex items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-bold transition hover:translate-x-1 lg:size-12 lg:justify-center lg:px-0 lg:py-0 lg:hover:translate-x-0",
                   active
                     ? "bg-gradient-to-r from-[#FF6B6B] to-[#FF9F43] text-white shadow-[0_12px_32px_rgba(255,107,107,.35)]"
                     : theme === "dark"
                       ? "text-white/72 hover:bg-white/[0.08] hover:text-white"
                       : "text-[#121A2E]/70 hover:bg-[#FF6B6B]/8 hover:text-[#121A2E]"
                 )}
+                title={item.label}
               >
                 <item.icon className="size-5" />
-                {item.label}
+                <span className="lg:hidden">{item.label}</span>
+                <span
+                  className={cn(
+                    "pointer-events-none absolute left-[calc(100%+10px)] top-1/2 z-[90] hidden -translate-y-1/2 whitespace-nowrap rounded-xl border px-3 py-2 text-xs font-black opacity-0 shadow-2xl backdrop-blur-xl transition group-hover:opacity-100 lg:block",
+                    theme === "dark"
+                      ? "border-white/12 bg-[#120A28]/92 text-white"
+                      : "border-[#121A2E]/10 bg-white/95 text-[#121A2E]"
+                  )}
+                >
+                  {item.label}
+                </span>
               </button>
             );
           })}
         </nav>
 
-        <div className="absolute bottom-4 left-4 right-4 grid gap-2">
+        <div className="absolute bottom-4 left-4 right-4 grid gap-2 lg:left-3 lg:right-3">
           <button
             type="button"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="flex items-center justify-center gap-2 rounded-2xl border border-white/12 bg-white/[0.08] px-4 py-3 text-sm font-black transition hover:scale-[1.02]"
+            className="group relative flex items-center justify-center gap-2 rounded-2xl border border-white/12 bg-white/[0.08] px-4 py-3 text-sm font-black transition hover:scale-[1.02] lg:size-12 lg:px-0 lg:py-0"
+            title={theme === "dark" ? "Светлая тема" : "Темная тема"}
           >
             {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
-            {theme === "dark" ? "Светлая тема" : "Темная тема"}
+            <span className="lg:hidden">{theme === "dark" ? "Светлая тема" : "Темная тема"}</span>
+            <span
+              className={cn(
+                "pointer-events-none absolute left-[calc(100%+10px)] top-1/2 z-[90] hidden -translate-y-1/2 whitespace-nowrap rounded-xl border px-3 py-2 text-xs font-black opacity-0 shadow-2xl backdrop-blur-xl transition group-hover:opacity-100 lg:block",
+                theme === "dark"
+                  ? "border-white/12 bg-[#120A28]/92 text-white"
+                  : "border-[#121A2E]/10 bg-white/95 text-[#121A2E]"
+              )}
+            >
+              {theme === "dark" ? "Светлая тема" : "Темная тема"}
+            </span>
           </button>
         </div>
       </motion.aside>

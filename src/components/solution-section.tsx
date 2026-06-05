@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export function SolutionSection() {
   return (
-    <SectionReveal>
+    <SectionReveal className="neopolis-depth-solution">
       <div className="container grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
           <p className="text-sm font-semibold uppercase text-[#A78BFA]">Решение</p>

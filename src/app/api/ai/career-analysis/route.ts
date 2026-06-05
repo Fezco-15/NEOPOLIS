@@ -13,6 +13,7 @@ export const runtime = "nodejs";
 const GIGACHAT_OAUTH_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth";
 const GIGACHAT_COMPLETIONS_URL = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions";
 const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
+const GROQ_COMPLETIONS_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 async function getGigachatToken() {
   const authKey = process.env.GIGACHAT_AUTH_KEY;
@@ -118,16 +119,74 @@ async function askGemini(payload: CareerAiPayload): Promise<CareerAiReport | nul
   return normalizeAiReport({ provider: "gemini", ...parsed }, payload);
 }
 
-export async function POST(request: Request) {
-  const payload = (await request.json()) as CareerAiPayload;
-  const provider = process.env.AI_PROVIDER ?? "local";
+async function askGroq(payload: CareerAiPayload): Promise<CareerAiReport | null> {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) return null;
 
-  try {
-    const report = provider === "gemini" ? await askGemini(payload) : await askGigachat(payload);
-    if (report) return NextResponse.json(report);
-  } catch (error) {
-    console.error(`[AI:${provider}] provider failed, using local fallback`, error);
+  const response = await fetch(GROQ_COMPLETIONS_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile",
+      temperature: 0.25,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: aiCareerSystemPrompt },
+        { role: "user", content: buildGigachatUserPrompt(payload) }
+      ]
+    }),
+    cache: "no-store"
+  });
+
+  if (!response.ok) {
+    const details = await response.text().catch(() => "");
+    throw new Error(`Groq completion failed: ${response.status} ${details.slice(0, 240)}`);
   }
 
+  const data = (await response.json()) as {
+    choices?: { message?: { content?: string } }[];
+  };
+  const content = data.choices?.[0]?.message?.content;
+  if (!content) return null;
+
+  const json = content.match(/\{[\s\S]*\}/)?.[0] ?? content;
+  const parsed = JSON.parse(json) as Omit<CareerAiReport, "provider">;
+  return normalizeAiReport({ provider: "groq", ...parsed }, payload);
+}
+
+async function tryProvider(provider: string, payload: CareerAiPayload): Promise<CareerAiReport | null> {
+  try {
+    if (provider === "gemini") return await askGemini(payload);
+    if (provider === "groq") return await askGroq(payload);
+    if (provider === "gigachat") return await askGigachat(payload);
+    return null;
+  } catch (error) {
+    console.error(`[AI:${provider}] provider failed`, error);
+    return null;
+  }
+}
+
+function providerChain() {
+  const preferred = process.env.AI_PROVIDER ?? "gemini";
+  const fallback = (process.env.AI_FALLBACK_PROVIDER ?? "groq")
+    .split(",")
+    .map((provider) => provider.trim())
+    .filter(Boolean);
+  return Array.from(new Set([preferred, ...fallback, "local"]));
+}
+
+export async function POST(request: Request) {
+  const payload = (await request.json()) as CareerAiPayload;
+
+  for (const provider of providerChain()) {
+    if (provider === "local") break;
+    const report = await tryProvider(provider, payload);
+    if (report) return NextResponse.json(report);
+  }
+
+  console.error("[AI] external providers unavailable, using local fallback");
   return NextResponse.json(buildLocalCareerReport(payload));
 }

@@ -139,8 +139,14 @@ export const aiCareerSystemPrompt = `
 - Формулируй как предварительные гипотезы beta-версии.
 - Опирайся только на переданные ответы, теги, выбранный аватар и миссии.
 - Не выдумывай миссии, названия сцен, варианты ответа, выбранный аватар или гаджет.
-- Поле evidence заполняй только прямыми фактами из behaviorProfile.exactEvidence.
+- Используй behaviorProfile.avatarProfileSignals как реальные диагностические сигналы выбора персонажа.
+- Поле evidence заполняй только прямыми фактами из behaviorProfile.avatarSignals, behaviorProfile.exactEvidence и behaviorProfile.missionLabEvidence.
 - Давай 3-5 подходящих направлений, смежные профессии, навыки для развития и ЕГЭ/вузовские треки.
+- Объясняй путь от общего к конкретному: сначала понятная базовая сфера школьника, потом профильные специальности, потом современные роли, и только потом AI/advanced-треки если они реально следуют из данных.
+- Не своди все рекомендации к искусственному интеллекту. AI может быть инструментом или продвинутым уровнем, но базовые профессии и специальности тоже обязательны.
+- Отдельно дай educationMatches: конкретные российские вузы разного уровня входа, город, программа, специальность, ориентир баллов, предметы ЕГЭ, смежные программы.
+- Отдельно дай laborMarket: понятные роли, смежные профессии, зарплатные вилки junior/middle/senior, навыки, компании и ссылку на HH-поиск по роли.
+- Не выдумывай конкретную live-вакансию с датой/работодателем как факт, если она не передана. Можно давать рыночный ориентир и HH search URL.
 - Если данных мало, честно говори, что нужна полная диагностика.
 - Возвращай JSON без markdown.
 `;
@@ -159,6 +165,35 @@ export const aiCareerResponseSchema = {
       exams: ["string"],
       universityTracks: ["string"],
       salaryHint: "string"
+    }
+  ],
+  educationMatches: [
+    {
+      tier: "string",
+      university: "string",
+      city: "string",
+      program: "string",
+      specialty: "string",
+      passingScore: "string",
+      exams: ["string"],
+      fitReason: "string",
+      adjacentPrograms: ["string"],
+      imageUrl: "string",
+      imageSourceUrl: "string",
+      sourceLabel: "string"
+    }
+  ],
+  laborMarket: [
+    {
+      role: "string",
+      fit: "string",
+      salaryRange: "string",
+      demand: "string",
+      companies: ["string"],
+      skills: ["string"],
+      adjacentRoles: ["string"],
+      hhSearchUrl: "string",
+      sourceLabel: "string"
     }
   ],
   nextSteps: ["string"],

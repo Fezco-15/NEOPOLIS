@@ -18,28 +18,23 @@ const particles = [
 
 export function Hero() {
   const { scrollY } = useScroll();
-  const backgroundY = useTransform(scrollY, [0, 800], [0, 72]);
   const contentY = useTransform(scrollY, [0, 800], [0, -28]);
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#1B0F33]">
-      <motion.div
-        className="absolute inset-0 bg-cover bg-center will-change-transform"
-        style={{
-          y: backgroundY,
-          scale: 1.06,
-          backgroundImage: "url('/neopolis-hero-bg.png')"
-        }}
-      />
+    <section className="relative min-h-screen overflow-hidden">
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(90deg, rgba(12,8,30,0.88) 0%, rgba(20,12,45,0.72) 35%, rgba(20,12,45,0.35) 60%, rgba(20,12,45,0.15) 100%)"
+            "linear-gradient(90deg, rgba(12,8,30,0.88) 0%, rgba(20,12,45,0.72) 35%, rgba(20,12,45,0.35) 60%, rgba(20,12,45,0.15) 100%)",
+          maskImage: "linear-gradient(180deg, black 0%, black 64%, rgba(0,0,0,0.72) 78%, transparent 100%)"
         }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_28%,rgba(255,107,107,.24),transparent_30%),radial-gradient(circle_at_78%_16%,rgba(167,139,250,.2),transparent_32%),linear-gradient(180deg,rgba(27,15,51,.08),rgba(27,15,51,.36))]" />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#1B0F33] via-[#1B0F33]/60 to-transparent" />
+      <div
+        className="absolute inset-0 bg-[radial-gradient(circle_at_20%_28%,rgba(255,107,107,.24),transparent_30%),radial-gradient(circle_at_78%_16%,rgba(167,139,250,.2),transparent_32%),linear-gradient(180deg,rgba(27,15,51,.08),rgba(27,15,51,.36))]"
+        style={{ maskImage: "linear-gradient(180deg, black 0%, black 58%, rgba(0,0,0,0.58) 78%, transparent 100%)" }}
+      />
+      <div className="absolute inset-x-0 -bottom-44 h-[32rem] bg-gradient-to-t from-[#1B0F33]/0 via-[#1B0F33]/12 to-transparent" />
 
       {particles.map((particle) => (
         <motion.span
