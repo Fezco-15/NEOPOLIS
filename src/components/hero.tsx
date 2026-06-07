@@ -23,7 +23,7 @@ export function Hero() {
   return (
     <section className="relative min-h-screen overflow-hidden">
       <div
-        className="absolute inset-0"
+        className="pointer-events-none absolute inset-0"
         style={{
           background:
             "linear-gradient(90deg, rgba(12,8,30,0.88) 0%, rgba(20,12,45,0.72) 35%, rgba(20,12,45,0.35) 60%, rgba(20,12,45,0.15) 100%)",
@@ -31,10 +31,10 @@ export function Hero() {
         }}
       />
       <div
-        className="absolute inset-0 bg-[radial-gradient(circle_at_20%_28%,rgba(255,107,107,.24),transparent_30%),radial-gradient(circle_at_78%_16%,rgba(167,139,250,.2),transparent_32%),linear-gradient(180deg,rgba(27,15,51,.08),rgba(27,15,51,.36))]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_28%,rgba(255,107,107,.24),transparent_30%),radial-gradient(circle_at_78%_16%,rgba(167,139,250,.2),transparent_32%),linear-gradient(180deg,rgba(27,15,51,.08),rgba(27,15,51,.36))]"
         style={{ maskImage: "linear-gradient(180deg, black 0%, black 58%, rgba(0,0,0,0.58) 78%, transparent 100%)" }}
       />
-      <div className="absolute inset-x-0 -bottom-44 h-[32rem] bg-gradient-to-t from-[#1B0F33]/0 via-[#1B0F33]/12 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 -bottom-44 h-[32rem] bg-gradient-to-t from-[#1B0F33]/0 via-[#1B0F33]/12 to-transparent" />
 
       {particles.map((particle) => (
         <motion.span
@@ -53,13 +53,13 @@ export function Hero() {
 
       <motion.div
         style={{ y: contentY }}
-        className="relative flex min-h-screen items-center px-4 pb-10 pt-24 sm:px-8 sm:pb-12 sm:pt-28 lg:px-14 xl:px-20"
+        className="relative z-10 flex min-h-screen items-center px-4 pb-10 pt-24 sm:px-8 sm:pb-12 sm:pt-28 lg:px-14 xl:px-20"
       >
         <motion.div
           initial={{ opacity: 0, y: 32, filter: "blur(10px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.85, ease: "easeOut" }}
-          className="max-w-[650px] 2xl:max-w-[700px]"
+          className="relative z-20 max-w-[650px] 2xl:max-w-[700px]"
         >
           <motion.div
             initial={{ opacity: 0, x: -16 }}
@@ -78,11 +78,11 @@ export function Hero() {
             AI-RPG платформа профориентации, где школьник проходит сюжетные миссии, исследует районы цифрового города и раскрывает свои сильные стороны.
           </p>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          <div className="relative z-30 mt-7 flex flex-col gap-3 sm:flex-row">
             <Button
               asChild
               size="lg"
-              className="h-13 rounded-[24px] px-6 text-base shadow-[0_18px_52px_rgba(255,107,107,.38)] hover:shadow-[0_0_60px_rgba(255,159,67,.48)] sm:h-14"
+              className="min-h-14 w-full rounded-[26px] px-7 text-base shadow-[0_20px_58px_rgba(255,107,107,.48),0_0_0_1px_rgba(255,255,255,.12)_inset] ring-2 ring-[#FFD166]/30 hover:shadow-[0_0_60px_rgba(255,159,67,.48)] sm:h-14 sm:w-auto"
             >
               <Link href="/game">
                 <Play className="size-5" />
@@ -93,7 +93,7 @@ export function Hero() {
               asChild
               size="lg"
               variant="secondary"
-              className="h-13 rounded-[24px] border-white/18 bg-white/[0.08] px-6 text-base text-white shadow-[0_18px_52px_rgba(167,139,250,.14)] backdrop-blur-2xl hover:border-[#FF9F43]/60 hover:bg-white/[0.12] sm:h-14"
+              className="min-h-13 w-full rounded-[24px] border-white/18 bg-white/[0.08] px-6 text-base text-white shadow-[0_18px_52px_rgba(167,139,250,.14)] backdrop-blur-2xl hover:border-[#FF9F43]/60 hover:bg-white/[0.12] sm:h-14 sm:w-auto"
             >
               <Link href="#how">
                 Посмотреть, как работает

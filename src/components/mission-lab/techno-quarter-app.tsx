@@ -17,15 +17,15 @@ export type TechnoQuarterCompletion = {
 function NoiseAndParticles({ danger }: { danger: boolean }) {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.5)_1px,transparent_1px)] [background-size:72px_72px]" />
-      <div className="absolute inset-0 opacity-[0.1] [background-image:radial-gradient(circle_at_center,white_1px,transparent_1px)] [background-size:5px_5px]" />
-      {Array.from({ length: 16 }).map((_, index) => (
+      <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.5)_1px,transparent_1px)] [background-size:72px_72px]" />
+      <div className="absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_center,white_1px,transparent_1px)] [background-size:6px_6px]" />
+      {Array.from({ length: 7 }).map((_, index) => (
         <motion.span
           key={index}
-          className={cn("absolute h-px w-36 bg-gradient-to-r from-transparent to-transparent", danger ? "via-[#FF6B6B]" : "via-[#00D1C6]")}
+          className={cn("absolute hidden h-px w-28 bg-gradient-to-r from-transparent to-transparent md:block", danger ? "via-[#FF6B6B]" : "via-[#00D1C6]")}
           style={{ top: `${8 + ((index * 11) % 86)}%`, left: `${(index * 19) % 100}%` }}
-          animate={{ x: ["-20vw", "110vw"], opacity: [0, 0.85, 0] }}
-          transition={{ duration: 6 + (index % 5), repeat: Infinity, delay: index * 0.32 }}
+          animate={{ x: ["-14vw", "104vw"], opacity: [0, 0.52, 0] }}
+          transition={{ duration: 8 + (index % 4), repeat: Infinity, delay: index * 0.58 }}
         />
       ))}
     </div>
@@ -35,20 +35,49 @@ function NoiseAndParticles({ danger }: { danger: boolean }) {
 function ViOverlay() {
   return (
     <motion.div
-      className="pointer-events-none absolute right-4 top-[12%] hidden w-[260px] overflow-hidden rounded-[32px] border border-[#00D1C6]/35 bg-[#00D1C6]/10 shadow-[0_0_70px_rgba(0,209,198,0.34)] backdrop-blur-md lg:block"
-      initial={{ opacity: 0, x: 40, filter: "blur(14px)" }}
-      animate={{ opacity: 0.92, x: 0, y: [0, -8, 0], filter: "blur(0px)" }}
-      transition={{ y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
+      className="pointer-events-none absolute right-4 top-[12%] hidden w-[230px] overflow-hidden rounded-[28px] border border-[#00D1C6]/35 bg-[#061729]/60 shadow-[0_0_42px_rgba(0,209,198,0.24)] backdrop-blur-sm lg:block"
+      initial={{ opacity: 0, x: 28 }}
+      animate={{ opacity: 0.86, x: 0 }}
+      transition={{ duration: 0.45, ease: "easeOut" }}
     >
       <Image src="/mission-lab/prologue/05-vi-hologram.png" alt="ВИ" width={1024} height={1024} className="h-auto w-full opacity-90 mix-blend-screen" />
-      <motion.div
+      <div
         className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent"
-        animate={{ y: ["-100%", "100%"] }}
-        transition={{ duration: 2.8, repeat: Infinity, ease: "linear" }}
       />
       <div className="absolute inset-x-4 bottom-4 rounded-2xl border border-[#00D1C6]/40 bg-[#071225]/70 p-3 text-center text-xs font-black uppercase tracking-[0.2em] text-[#B8FFFB]">
         ВИ // online
       </div>
+    </motion.div>
+  );
+}
+
+function ViCompanion({ compact = false }: { compact?: boolean }) {
+  return (
+    <motion.div
+      className={cn(
+        "pointer-events-none relative overflow-hidden border border-[#00D1C6]/30 bg-[#061729]/78 shadow-[0_0_34px_rgba(0,209,198,.2)]",
+        compact
+          ? "flex h-20 w-full max-w-[15rem] items-center gap-3 rounded-2xl px-3"
+          : "hidden w-[190px] rounded-[26px] lg:block"
+      )}
+      initial={{ opacity: 0, y: compact ? 10 : 16 }}
+      animate={{ opacity: compact ? 0.88 : 0.82, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+      <div className={cn("relative shrink-0 overflow-hidden rounded-2xl bg-[#00D1C6]/10", compact ? "size-14" : "h-44 w-full")}>
+        <Image src="/mission-lab/prologue/05-vi-hologram.png" alt="VI" fill sizes={compact ? "64px" : "190px"} className="object-cover opacity-90 mix-blend-screen" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+      </div>
+      {compact ? (
+        <div className="min-w-0">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#B8FFFB]">VI online</p>
+          <p className="mt-1 text-xs leading-4 text-[#EDE7FF]/72">Mission support</p>
+        </div>
+      ) : (
+        <div className="absolute inset-x-3 bottom-3 rounded-2xl border border-[#00D1C6]/30 bg-[#071225]/72 p-2 text-center text-[10px] font-black uppercase tracking-[0.18em] text-[#B8FFFB]">
+          VI online
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -68,21 +97,21 @@ function Background({ frame }: { frame: NovelFrame }) {
         <motion.div
           key={frame.backgroundImage}
           className="absolute inset-0"
-          initial={{ opacity: 0, scale: 1.045, filter: "blur(10px)" }}
-          animate={{ opacity: 1, scale: 1.015, filter: "blur(0px)" }}
-          exit={{ opacity: 0, scale: 1.03, filter: "blur(8px)" }}
-          transition={{ duration: 0.75, ease: "easeOut" }}
+          initial={{ opacity: 0, scale: 1.025 }}
+          animate={{ opacity: 1, scale: 1.008 }}
+          exit={{ opacity: 0, scale: 1.015 }}
+          transition={{ duration: 0.42, ease: "easeOut" }}
         >
-          <Image src={frame.backgroundImage} alt={frame.title ?? "Сцена"} fill priority sizes="100vw" className="object-cover" />
+          <Image src={frame.backgroundImage} alt={frame.title ?? "Сцена"} fill priority={frame.id === "prologue-01"} sizes="100vw" className="object-cover" />
         </motion.div>
       </AnimatePresence>
       <div className={cn("absolute inset-0", overlayClass)} />
       <NoiseAndParticles danger={danger || Boolean(frame.glitch)} />
       {frame.glitch ? (
         <motion.div
-          className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,rgba(255,107,107,.14)_48%,transparent_52%)] bg-[length:100%_9px] mix-blend-screen"
+          className="absolute inset-0 hidden bg-[linear-gradient(180deg,transparent_0%,rgba(255,107,107,.12)_48%,transparent_52%)] bg-[length:100%_12px] mix-blend-screen md:block"
           animate={{ opacity: [0.05, 0.32, 0.08], x: [0, -7, 3, 0] }}
-          transition={{ duration: 0.38, repeat: Infinity, repeatDelay: 1.6 }}
+          transition={{ duration: 0.7, repeat: Infinity, repeatDelay: 2.2 }}
         />
       ) : null}
     </div>
@@ -145,9 +174,9 @@ function TopHud({ frame }: { frame: NovelFrame }) {
 function DialogueLine({ line, active }: { line: NovelLine; active: boolean }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-      animate={{ opacity: active ? 1 : 0.58, y: 0, filter: "blur(0px)" }}
-      className={cn("rounded-2xl border px-4 py-3", active ? "border-[#A78BFA]/35 bg-white/[0.08]" : "border-white/10 bg-white/[0.035]")}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: active ? 1 : 0.68, y: 0 }}
+      className={cn("rounded-2xl border px-4 py-3", active ? "border-[#A78BFA]/40 bg-[#170D2F]/88" : "border-white/12 bg-[#120A28]/68")}
     >
       {line.speaker ? <p className="mb-1 text-xs font-black uppercase tracking-[0.18em] text-[#FF9F43]">{line.speaker}</p> : null}
       <p className="text-base leading-7 text-[#F7F0FF] md:text-lg">{line.text}</p>
@@ -159,12 +188,15 @@ function DialoguePanel({ frame, visibleLines }: { frame: NovelFrame; visibleLine
   return (
     <motion.section
       key={`${frame.id}-${visibleLines.length}`}
-      initial={{ opacity: 0, y: 24, filter: "blur(10px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      className="pointer-events-auto max-h-[46vh] w-full max-w-5xl overflow-y-auto rounded-[28px] border border-[#A78BFA]/30 bg-[#100821]/72 p-4 shadow-[0_0_80px_rgba(0,0,0,.45),0_0_46px_rgba(167,139,250,.16)] backdrop-blur-2xl md:p-5"
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="pointer-events-auto max-h-[48vh] w-full max-w-5xl overflow-y-auto rounded-[24px] border border-[#A78BFA]/35 bg-[#100821]/88 p-4 shadow-[0_0_54px_rgba(0,0,0,.42),0_0_30px_rgba(167,139,250,.13)] backdrop-blur-md md:rounded-[28px] md:p-5"
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <Badge className="border-[#00D1C6]/30 bg-[#00D1C6]/10 text-[#B8FFFB]">{frame.location ?? "НЕОПОЛИС"}</Badge>
+        <div className="lg:hidden">
+          <ViCompanion compact />
+        </div>
       </div>
       <div className="space-y-3">
         {visibleLines.map((line, index) => (
@@ -181,24 +213,20 @@ function ChoiceCard({ choice, index, onChoose }: { choice: NovelChoice; index: n
       type="button"
       onClick={onChoose}
       initial={{ opacity: 0, y: 24, scale: 0.96 }}
-      animate={{ opacity: 1, y: [0, -4, 0], scale: 1 }}
-      transition={{ opacity: { delay: index * 0.08 }, y: { duration: 3.2, repeat: Infinity, delay: index * 0.23, ease: "easeInOut" } }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ opacity: { delay: index * 0.08 }, duration: 0.28 }}
       whileHover={{ scale: 1.025, y: -8 }}
       whileTap={{ scale: 0.985 }}
-      className="group relative overflow-hidden rounded-3xl border border-[#A78BFA]/25 bg-[#120A28]/72 p-4 text-left shadow-[0_20px_70px_rgba(0,0,0,.28)] backdrop-blur-2xl transition hover:border-[#FF9F43]/70 hover:shadow-[0_0_46px_rgba(255,159,67,.26)]"
+      className="group relative min-w-0 overflow-hidden rounded-2xl border border-[#A78BFA]/30 bg-[#120A28]/86 p-4 text-left shadow-[0_20px_56px_rgba(0,0,0,.24)] backdrop-blur-md transition hover:border-[#FF9F43]/70 hover:shadow-[0_0_34px_rgba(255,159,67,.22)] md:rounded-3xl"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B6B]/0 via-[#A78BFA]/0 to-[#00D1C6]/0 opacity-0 transition duration-300 group-hover:from-[#FF6B6B]/14 group-hover:via-[#A78BFA]/12 group-hover:to-[#00D1C6]/10 group-hover:opacity-100" />
-      <motion.span
-        className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-[#FFD166] to-transparent opacity-0 group-hover:opacity-100"
-        animate={{ y: ["-100%", "100%"] }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
-      />
-      <div className="relative flex gap-3">
+      <div className="absolute inset-y-0 left-0 hidden w-px bg-gradient-to-b from-transparent via-[#FFD166] to-transparent opacity-0 transition group-hover:opacity-100 md:block" />
+      <div className="relative flex min-w-0 gap-3">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-[#FF6B6B]/40 bg-[#FF6B6B]/20 text-xl font-black text-white shadow-[0_0_28px_rgba(255,107,107,.2)]">
           {index + 1}
         </span>
-        <div>
-          <p className="text-base font-black leading-snug text-white md:text-lg">{choice.text}</p>
+        <div className="min-w-0">
+          <p className="break-words text-base font-black leading-snug text-white md:text-lg">{choice.text}</p>
         </div>
       </div>
     </motion.button>
@@ -213,7 +241,7 @@ function Choices({ frame }: { frame: NovelFrame }) {
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      className="pointer-events-auto grid w-full gap-3 md:grid-cols-2 xl:grid-cols-4"
+      className="pointer-events-auto grid w-full min-w-0 gap-3 md:grid-cols-2 lg:col-span-2 xl:grid-cols-4"
     >
       {frame.choices.map((choice, index) => (
         <ChoiceCard key={choice.id} choice={choice} index={index} onChoose={() => dispatch({ type: "CHOOSE", choice })} />
@@ -231,9 +259,9 @@ function NextArrow({ hidden }: { hidden: boolean }) {
       type="button"
       aria-label="Следующая сцена"
       onClick={() => dispatch({ type: "ADVANCE" })}
-      className="pointer-events-auto fixed right-4 top-1/2 z-30 flex size-14 -translate-y-1/2 items-center justify-center rounded-full border border-[#FF9F43]/45 bg-[#160B2F]/70 text-[#FFD166] shadow-[0_0_40px_rgba(255,159,67,.28)] backdrop-blur-xl md:right-7 md:size-16"
-      animate={{ x: [0, 7, 0], boxShadow: ["0 0 24px rgba(255,159,67,.18)", "0 0 46px rgba(255,159,67,.45)", "0 0 24px rgba(255,159,67,.18)"] }}
-      transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+      className="pointer-events-auto fixed right-4 top-1/2 z-30 flex size-14 -translate-y-1/2 items-center justify-center rounded-full border border-[#FF9F43]/45 bg-[#160B2F]/78 text-[#FFD166] shadow-[0_0_30px_rgba(255,159,67,.24)] backdrop-blur-md md:right-7 md:size-16"
+      animate={{ x: [0, 5, 0] }}
+      transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.94 }}
     >
@@ -269,8 +297,9 @@ function NovelScreen() {
       {currentFrame.showVi ? <ViOverlay /> : null}
       <TopHud frame={currentFrame} />
       <div className="relative z-10 flex min-h-dvh flex-col justify-end gap-4 px-4 pb-24 pt-28 md:px-7 md:pb-20">
-        <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_190px] lg:items-end">
           <DialoguePanel frame={currentFrame} visibleLines={visibleLines} />
+          <ViCompanion />
           <AnimatePresence>{choicesVisible ? <Choices key={currentFrame.id} frame={currentFrame} /> : null}</AnimatePresence>
         </div>
       </div>

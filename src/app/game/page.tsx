@@ -62,7 +62,7 @@ function MissionCompleteScreen({ onContinue }: { onContinue: () => void }) {
       <div className="absolute inset-0 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.5)_1px,transparent_1px)] [background-size:72px_72px]" />
 
       <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-4 py-16 text-center sm:px-8">
-        <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="rounded-[34px] border border-white/15 bg-[#100821]/72 p-5 shadow-[0_0_90px_rgba(167,139,250,.2)] backdrop-blur-2xl sm:p-9">
+        <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="rounded-[28px] border border-white/15 bg-[#100821]/88 p-5 shadow-[0_0_64px_rgba(167,139,250,.18)] backdrop-blur-md sm:rounded-[34px] sm:p-9">
           <Badge className="border-[#FFD166]/35 bg-[#FFD166]/12 text-[#FFD166]">ТехноКвартал / финал миссии</Badge>
           <div className="mt-7 grid gap-7">
             {missionCompleteSections.map((section, sectionIndex) => (
@@ -124,15 +124,15 @@ function PrimaryAiAnalysisScreen({
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#1B0F33] py-16 text-white">
-      <Image src="/neopolis-map-bg.png" alt="Неополис-9" fill sizes="100vw" className="object-cover opacity-35" />
-      <div className="absolute inset-0 bg-black/[0.72] backdrop-blur-[2px]" />
+      <Image src="/neopolis-map-bg.png" alt="Неополис-9" fill sizes="100vw" className="object-cover opacity-30" />
+      <div className="absolute inset-0 bg-black/[0.78]" />
       <section className="container relative">
         <div className="mx-auto max-w-6xl">
           <Badge className="border-[#00D1C6]/35 bg-[#00D1C6]/10 text-[#B8FFFB]">Первичная профориентация</Badge>
-          <h1 className="mt-5 max-w-4xl text-4xl font-black leading-tight sm:text-6xl">
+          <h1 className="mt-5 max-w-4xl break-words text-3xl font-black leading-tight sm:text-6xl">
             AI собирает первые контуры твоего профессионального профиля
           </h1>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
+          <p className="mt-5 max-w-3xl break-words text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
             Профиль строится на выбранном аватаре и решениях первой миссии. Это не финальный диагноз, а качественная стартовая гипотеза перед городом.
           </p>
 
